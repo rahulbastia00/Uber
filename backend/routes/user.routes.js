@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { body } = require("express-validator");
 const userController = require("../controllers/user.controller");
+const authMiddleware = require('../middlewares/auth.middleware');
 
 router.post(
   "/register",
@@ -10,8 +11,8 @@ router.post(
     body("fullname.firstname")
       .isLength({ min: 3 })
       .withMessage("Firstname must be greater than 3 characters"),
-    body("fullname.lastname") // Add validation for lastname if needed
-      .optional() // Optional if you want to allow empty last names
+    body("fullname.lastname") 
+      .optional() 
       .isLength({ min: 3 })
       .withMessage("Lastname must be greater than 3 characters"),
     body("password")
@@ -19,6 +20,13 @@ router.post(
       .withMessage("Password must be at least 6 characters"),
   ],
   userController.registerUser
-);
+)
+router.post('/login', [
+  body('email').isEmail().withMessage('Invalid Email'),
+  body('password').isLength({ min: 6 }).withMessage('Password not match')
+], userController.loginUser),
+
+router.get('/profile', authMiddleware.authUser, userController.getUserProfile)
+router.get('/logout', authMiddleware.authUser, userController.logoutUser)
 
 module.exports = router;

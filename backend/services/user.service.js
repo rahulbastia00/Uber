@@ -1,5 +1,4 @@
-/* This code snippet is a JavaScript module that exports a function called `createUser`. Here's a
-breakdown of what it does: */
+
 const userModel = require('../models/user.model');
 
 
